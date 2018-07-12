@@ -11,9 +11,16 @@ readme = "README.md"
 
 [lib]
 
+[features]
+default = []
+embedded-opendrain = ["embedded-hal"]
+embedded-spi = ["embedded-hal"]
+linux-gpio = []
+
 [dependencies]
 byteorder = { version = "1", default-features = false }
 
 [dependencies.embedded-hal]
 features = ["unproven"]
 version = "0.2.1"
+optional = true

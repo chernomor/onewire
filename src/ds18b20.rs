@@ -1,12 +1,11 @@
 
 use byteorder::ByteOrder;
 use byteorder::LittleEndian;
-use hal::blocking::delay::DelayUs;
 
 use Error;
 use Device;
-use Sensor;
 use OneWire;
+use ByteDriver;
 
 pub const FAMILY_CODE : u8 = 0x28;
 
@@ -64,14 +63,14 @@ impl DS18B20 {
         }
     }
 
-    pub fn measure_temperature(&self, wire: &mut OneWire, delay: &mut DelayUs<u16>) -> Result<MeasureResolution, Error> {
-        wire.reset_select_write_only(delay, &self.device, &[Command::Convert as u8])?;
+    pub fn measure_temperature<D: ByteDriver>(&self, wire: &mut OneWire<D>) -> Result<MeasureResolution, Error> {
+        wire.reset_select_write_only(&self.device, &[Command::Convert as u8])?;
         Ok(self.resolution)
     }
 
-    pub fn read_temperature(&self, wire: &mut OneWire, delay: &mut DelayUs<u16>) -> Result<f32, Error> {
+    pub fn read_temperature<D: ByteDriver>(&self, wire: &mut OneWire<D>) -> Result<f32, Error> {
         let mut scratchpad = [0u8; 9];
-        wire.reset_select_write_read(delay, &self.device, &[Command::ReadScratchpad as u8], &mut scratchpad[..])?;
+        wire.reset_select_write_read(&self.device, &[Command::ReadScratchpad as u8], &mut scratchpad[..])?;
         super::ensure_correct_rcr8(&self.device,&scratchpad[..8], scratchpad[8])?;
         Ok(DS18B20::read_temperature_from_scratchpad(&scratchpad))
     }
@@ -80,19 +79,5 @@ impl DS18B20 {
         let temp_u16 = LittleEndian::read_u16(&scratchpad[0..2]);
         let temp_f32 = temp_u16 as i16 as f32 / 16_f32;
         temp_f32
-    }
-}
-
-impl Sensor for DS18B20 {
-    fn family_code() -> u8 {
-        FAMILY_CODE
-    }
-
-    fn start_measurement(&self, wire: &mut OneWire, delay: &mut DelayUs<u16>) -> Result<u16, Error> {
-        Ok(self.measure_temperature(wire, delay)?.time_ms())
-    }
-
-    fn read_measurement(&self, wire: &mut OneWire, delay: &mut DelayUs<u16>) -> Result<f32, Error> {
-        self.read_temperature(wire, delay)
     }
 }
