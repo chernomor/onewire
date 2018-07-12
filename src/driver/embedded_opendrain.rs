@@ -13,14 +13,14 @@ use BitDriver;
 pub trait OpenDrainOutput: OutputPin + InputPin {}
 impl<P: OutputPin + InputPin> OpenDrainOutput for P {}
 
-pub struct BlockingOpenDrainByteDriver<'a> {
+pub struct BlockingOpenDrainDriver<'a> {
     pin: &'a mut OpenDrainOutput,
     delay: &'a mut DelayUs<u16>,
 }
 
-impl<'a> BlockingOpenDrainByteDriver<'a> {
-    pub fn new(pin: &'a mut OpenDrainOutput, delay: &'a mut DelayUs<u16>) -> BlockingOpenDrainByteDriver<'a> {
-        BlockingOpenDrainByteDriver {
+impl<'a> BlockingOpenDrainDriver<'a> {
+    pub fn new(pin: &'a mut OpenDrainOutput, delay: &'a mut DelayUs<u16>) -> BlockingOpenDrainDriver<'a> {
+        BlockingOpenDrainDriver {
             pin,
             delay,
         }
@@ -60,7 +60,7 @@ impl<'a> BlockingOpenDrainByteDriver<'a> {
 
 
 
-impl<'a> Driver for BlockingOpenDrainByteDriver<'a> {
+impl<'a> Driver for BlockingOpenDrainDriver<'a> {
     fn reset(&mut self) -> Result<bool, Error> {
         // let mut cli = DisableInterrupts::new();
         self.set_input();
@@ -87,7 +87,7 @@ impl<'a> Driver for BlockingOpenDrainByteDriver<'a> {
     }
 }
 
-impl<'a> BitDriver for BlockingOpenDrainByteDriver<'a> {
+impl<'a> BitDriver for BlockingOpenDrainDriver<'a> {
     fn read_bit(&mut self) -> Result<bool, Error> {
         // let cli = DisableInterrupts::new();
         self.set_output();
