@@ -18,7 +18,7 @@ fn main() -> ! {
         .into_open_drain_output(&mut gpioc.crh)
         .downgrade();
         
-    let mut wire = OneWire::new(&mut one, false);
+    let mut wire = OneWire::new(BlockingOpenDrainByteDriver::new(&mut one, &mut delay));
     
     if wire.reset().is_err() {
         // missing pullup or error on line
@@ -27,19 +27,20 @@ fn main() -> ! {
     
     // search for devices
     let mut search = DeviceSearch::new();
-    while let Some(device) = wire.search_next(&mut search, delay).unwrap() {
+    while let Some(device) = wire.search_next(&mut search).unwrap() {
         match device.address[0] {
             ds18b20::FAMILY_CODE => {
                 let mut ds18b20 = DS18b20::new(device).unwrap();
                 
                 // request sensor to measure temperature
-                let resolution = ds18b20.measure_temperature(&mut wire, &mut delay).unwrap();
+                let resolution = ds18b20.measure_temperature(&mut wire).unwrap();
                 
                 // wait for compeltion, depends on resolution 
-                delay.delay_ms(resolution.time_ms());
+                // -- in this branch not possible (yet) due to the delay being borrowed
+                // delay.delay_ms(resolution.time_ms());
                 
                 // read temperature
-                let temperature = ds18b20.read_temperature(&mut wire, &mut delay).unwrap();
+                let temperature = ds18b20.read_temperature(&mut wire).unwrap();
             },
             _ => {
                 // unknown device type            
