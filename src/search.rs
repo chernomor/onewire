@@ -1,7 +1,5 @@
-
 use super::ADDRESS_BITS;
 use super::ADDRESS_BYTES;
-
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum SearchState {
@@ -22,7 +20,7 @@ impl DeviceSearch {
         DeviceSearch {
             address:       [0u8; ADDRESS_BYTES as usize],
             discrepancies: [0u8; ADDRESS_BYTES as usize],
-            state:         SearchState::Initialized,
+            state: SearchState::Initialized,
         }
     }
 
@@ -44,7 +42,7 @@ impl DeviceSearch {
         DeviceSearch::reset_bit(&mut self.address, bit);
     }
 
-    pub(crate)fn write_bit_in_address(&mut self, bit: u8, value: bool) {
+    pub(crate) fn write_bit_in_address(&mut self, bit: u8, value: bool) {
         if value {
             self.set_bit_in_address(bit);
         } else {
@@ -52,19 +50,19 @@ impl DeviceSearch {
         }
     }
 
-    pub(crate)fn is_bit_set_in_discrepancies(&self, bit: u8) -> bool {
+    pub(crate) fn is_bit_set_in_discrepancies(&self, bit: u8) -> bool {
         DeviceSearch::is_bit_set(&self.discrepancies, bit)
     }
 
-    pub(crate)fn set_bit_in_discrepancy(&mut self, bit: u8) {
+    pub(crate) fn set_bit_in_discrepancy(&mut self, bit: u8) {
         DeviceSearch::set_bit(&mut self.discrepancies, bit);
     }
 
-    pub(crate)fn reset_bit_in_discrepancy(&mut self, bit: u8) {
+    pub(crate) fn reset_bit_in_discrepancy(&mut self, bit: u8) {
         DeviceSearch::reset_bit(&mut self.discrepancies, bit);
     }
 
-    pub(crate)fn write_bit_in_discrepancy(&mut self, bit: u8, value: bool) {
+    pub(crate) fn write_bit_in_discrepancy(&mut self, bit: u8, value: bool) {
         if value {
             self.set_bit_in_discrepancy(bit);
         } else {

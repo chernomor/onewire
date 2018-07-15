@@ -1,4 +1,3 @@
-
 #[cfg(feature = "embedded-opendrain")] mod embedded_opendrain;
 #[cfg(feature = "embedded-opendrain")] pub use self::embedded_opendrain::*;
 
@@ -7,7 +6,6 @@
 
 #[cfg(feature = "linux-gpio")] mod linux_gpio;
 #[cfg(feature = "linux-gpio")] pub use self::linux_gpio::*;
-
 
 use super::Error;
 
@@ -34,7 +32,6 @@ pub trait Driver {
 
 /// See https://www.maximintegrated.com/en/app-notes/index.mvp/id/126
 pub trait BitDriver: Driver {
-
     ///    Read low bit
     ///
     /// A
@@ -113,16 +110,14 @@ impl<T: BitDriver> ByteDriver for T {
                 0x00
             }
         }
-        Ok(
-            to_bit(self.read_bit()?) << 7
-                | to_bit(self.read_bit()?) << 6
-                | to_bit(self.read_bit()?) << 5
-                | to_bit(self.read_bit()?) << 4
-                | to_bit(self.read_bit()?) << 3
-                | to_bit(self.read_bit()?) << 2
-                | to_bit(self.read_bit()?) << 1
-                | to_bit(self.read_bit()?)
-        )
+        Ok(to_bit(self.read_bit()?) << 7
+            | to_bit(self.read_bit()?) << 6
+            | to_bit(self.read_bit()?) << 5
+            | to_bit(self.read_bit()?) << 4
+            | to_bit(self.read_bit()?) << 3
+            | to_bit(self.read_bit()?) << 2
+            | to_bit(self.read_bit()?) << 1
+            | to_bit(self.read_bit()?))
     }
 
     fn write_byte(&mut self, data: u8) -> Result<(), Error> {

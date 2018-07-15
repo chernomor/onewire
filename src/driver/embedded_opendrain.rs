@@ -1,14 +1,12 @@
 extern crate embedded_hal as hal;
 
-use self::hal::digital::OutputPin;
-use self::hal::digital::InputPin;
 use self::hal::blocking::delay::DelayUs;
+use self::hal::digital::InputPin;
+use self::hal::digital::OutputPin;
 
-
-use Error;
-use Driver;
 use BitDriver;
-
+use Driver;
+use Error;
 
 pub trait OpenDrainOutput: OutputPin + InputPin {}
 impl<P: OutputPin + InputPin> OpenDrainOutput for P {}
@@ -19,11 +17,11 @@ pub struct BlockingOpenDrainDriver<'a> {
 }
 
 impl<'a> BlockingOpenDrainDriver<'a> {
-    pub fn new(pin: &'a mut OpenDrainOutput, delay: &'a mut DelayUs<u16>) -> BlockingOpenDrainDriver<'a> {
-        BlockingOpenDrainDriver {
-            pin,
-            delay,
-        }
+    pub fn new(
+        pin: &'a mut OpenDrainOutput,
+        delay: &'a mut DelayUs<u16>,
+    ) -> BlockingOpenDrainDriver<'a> {
+        BlockingOpenDrainDriver { pin, delay }
     }
 
     /// Allows the slave-device to change the
@@ -75,8 +73,6 @@ impl<'a> BlockingOpenDrainDriver<'a> {
     }
 }
 
-
-
 impl<'a> Driver for BlockingOpenDrainDriver<'a> {
     fn reset(&mut self) -> Result<bool, Error> {
         // let mut cli = DisableInterrupts::new();
@@ -105,7 +101,6 @@ impl<'a> Driver for BlockingOpenDrainDriver<'a> {
 }
 
 impl<'a> BitDriver for BlockingOpenDrainDriver<'a> {
-
     /// Somehow the theoretically timings do not work
     /// (tested on an stm32f103, bluepill). The tweaked
     /// timings below work.
@@ -129,10 +124,10 @@ impl<'a> BitDriver for BlockingOpenDrainDriver<'a> {
         // let cli = DisableInterrupts::new();
         self.write_low();
         self.set_output();
-        self.delay.delay_us(if high {10} else {65});
+        self.delay.delay_us(if high { 10 } else { 65 });
         self.write_high();
         // drop(cli);
-        self.delay.delay_us(if high {55} else {5});
+        self.delay.delay_us(if high { 55 } else { 5 });
         Ok(())
     }
 }

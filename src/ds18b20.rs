@@ -1,21 +1,20 @@
-
 use byteorder::ByteOrder;
 use byteorder::LittleEndian;
 
-use Error;
-use Device;
-use OneWire;
 use ByteDriver;
+use Device;
+use Error;
+use OneWire;
 
-pub const FAMILY_CODE : u8 = 0x28;
+pub const FAMILY_CODE: u8 = 0x28;
 
 #[repr(u8)]
 pub enum Command {
-    Convert = 0x44,
+    Convert         = 0x44,
     WriteScratchpad = 0x4e,
-    ReadScratchpad = 0xBE,
-    CopyScratchpad = 0x48,
-    RecallE2 = 0xB8,
+    ReadScratchpad  = 0xBE,
+    CopyScratchpad  = 0x48,
+    RecallE2        = 0xB8,
     ReadPowerSupply = 0xB4,
 }
 
@@ -59,19 +58,26 @@ impl DS18B20 {
     pub unsafe fn new_forced(device: Device) -> DS18B20 {
         DS18B20 {
             device,
-            resolution: MeasureResolution::TC
+            resolution: MeasureResolution::TC,
         }
     }
 
-    pub fn measure_temperature<D: ByteDriver>(&self, wire: &mut OneWire<D>) -> Result<MeasureResolution, Error> {
+    pub fn measure_temperature<D: ByteDriver>(
+        &self,
+        wire: &mut OneWire<D>,
+    ) -> Result<MeasureResolution, Error> {
         wire.reset_select_write_only(&self.device, &[Command::Convert as u8])?;
         Ok(self.resolution)
     }
 
     pub fn read_temperature<D: ByteDriver>(&self, wire: &mut OneWire<D>) -> Result<f32, Error> {
         let mut scratchpad = [0u8; 9];
-        wire.reset_select_write_read(&self.device, &[Command::ReadScratchpad as u8], &mut scratchpad[..])?;
-        super::ensure_correct_rcr8(&self.device,&scratchpad[..8], scratchpad[8])?;
+        wire.reset_select_write_read(
+            &self.device,
+            &[Command::ReadScratchpad as u8],
+            &mut scratchpad[..],
+        )?;
+        super::ensure_correct_rcr8(&self.device, &scratchpad[..8], scratchpad[8])?;
         Ok(DS18B20::read_temperature_from_scratchpad(&scratchpad))
     }
 
