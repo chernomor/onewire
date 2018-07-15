@@ -106,7 +106,7 @@ impl<'a> Driver for BlockingOpenDrainDriver<'a> {
 
 impl<'a> BitDriver for BlockingOpenDrainDriver<'a> {
 
-    /// Somehow te theoretically timings do not work
+    /// Somehow the theoretically timings do not work
     /// (tested on an stm32f103, bluepill). The tweaked
     /// timings below work.
     fn read_bit(&mut self) -> Result<bool, Error> {
@@ -122,7 +122,7 @@ impl<'a> BitDriver for BlockingOpenDrainDriver<'a> {
         Ok(val)
     }
 
-    /// Somehow te theoretically timings do not work
+    /// Somehow the theoretically timings do not work
     /// (tested on an stm32f103, bluepill). The tweaked
     /// timings below work.
     fn write_bit(&mut self, high: bool) -> Result<(), Error> {
