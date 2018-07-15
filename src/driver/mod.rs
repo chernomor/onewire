@@ -16,12 +16,71 @@ pub trait Driver {
     /// Returns Err(WireNotHigh) if the wire seems to be shortened,
     /// Ok(true) if presence pulse has been received and Ok(false)
     /// if no other device was detected but the wire seems to be ok
+    ///
+    ///
+    ///    Reset procedure
+    ///
+    /// A
+    /// |         +-????---------
+    /// |         | ????
+    /// |---------+ ????
+    /// +---------------------------> µs
+    /// 0        480  |         960
+    ///              550
+    ///      Presence pulse: low if there is a slave-device
+    ///
     fn reset(&mut self) -> Result<bool, Error>;
 }
 
+/// See https://www.maximintegrated.com/en/app-notes/index.mvp/id/126
 pub trait BitDriver: Driver {
+
+    ///    Read low bit
+    ///
+    /// A
+    /// |   ???               +-
+    /// |   ???               |
+    /// |---???---------------+
+    /// +---------------------------> µs
+    /// 0   6   15           70
+    ///          |
+    ///      Recommended read here
+    ///
+    ///
+    ///
+    ///    Read high bit
+    ///
+    /// A
+    /// |   ???-----------------
+    /// |   ???
+    /// |---???
+    /// +---------------------------> µs
+    /// 0   6   15           70
+    ///          |
+    ///      Recommended read here
+    ///
     fn read_bit(&mut self) -> Result<bool, Error>;
 
+    ///    Write low bit
+    ///
+    /// A
+    /// |                  +----
+    /// |                  |
+    /// |------------------+
+    /// +---------------------------> µs
+    /// 0                 60 70
+    ///
+    ///
+    ///    Write high bit
+    ///
+    /// A
+    /// |   +-------------------
+    /// |   |
+    /// |---+
+    /// +---------------------------> µs
+    /// 0   6                70
+    ///
+    ///
     fn write_bit(&mut self, data: bool) -> Result<(), Error>;
 }
 
