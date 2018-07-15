@@ -26,27 +26,44 @@ impl<'a> BlockingOpenDrainDriver<'a> {
         }
     }
 
+    /// Allows the slave-device to change the
+    /// state of the wire
     fn set_input(&mut self) {
-        // nothing to do
+        // high lets the pin 'float freely'
+        // thus the slave-device can pull it
+        // down or let it be pulled-up by the
+        // pull-up resistor
         self.pin.set_high()
     }
 
+    /// No longer allows the slave-device to
+    /// change the state of the wire
     fn set_output(&mut self) {
-        // nothing to do
+        // no change required, on write_low()
+        // the pin is pulled-down, on write_high()
+        // it is let to be 'float freely' and thus
+        // pulled-up by the pull-up resistor
     }
 
+    /// Set the wire state to low
     fn write_low(&mut self) {
+        // pull it down
         self.pin.set_low()
     }
 
+    /// Set the write state to high
     fn write_high(&mut self) {
+        // let it 'float freely' and thus
+        // be pulled-up by the pull-up resistor
         self.pin.set_high()
     }
 
+    /// Reads the current state of the wire
     fn read(&self) -> bool {
         self.pin.is_high()
     }
 
+    /// Waits up to 250us for the wire to get high
     fn ensure_wire_high(&mut self) -> Result<(), Error> {
         for _ in 0..125 {
             if self.read_bit()? {
