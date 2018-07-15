@@ -5,8 +5,8 @@
 #[cfg(feature = "embedded-spi")] mod embedded_spi;
 #[cfg(feature = "embedded-spi")] pub use self::embedded_spi::*;
 
-#[cfg(feature = "linux-gpio")] mod embedded_spi;
-#[cfg(feature = "linux-gpio")] pub use self::embedded_spi::*;
+#[cfg(feature = "linux-gpio")] mod linux_gpio;
+#[cfg(feature = "linux-gpio")] pub use self::linux_gpio::*;
 
 
 use super::Error;
