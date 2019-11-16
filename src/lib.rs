@@ -54,6 +54,10 @@ impl Device {
         })
     }
 
+    pub fn from_u8(address: [u8; 8]) -> Device {
+        Device { address }
+    }
+
     pub fn family_code(&self) -> u8 {
         self.address[0]
     }
