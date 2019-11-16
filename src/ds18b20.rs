@@ -91,6 +91,10 @@ impl DS18B20 {
     fn read_temperature_from_scratchpad(scratchpad: &[u8]) -> u16 {
         LittleEndian::read_u16(&scratchpad[0..2])
     }
+
+    pub fn device(&self) -> &Device {
+        &self.device
+    }
 }
 
 impl Sensor for DS18B20 {
